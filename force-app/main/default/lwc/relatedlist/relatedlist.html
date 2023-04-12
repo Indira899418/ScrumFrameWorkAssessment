@@ -1,0 +1,102 @@
+<template>
+    <!--main related list component-->
+    
+    <div class="container forceRelatedListSingleContainer" data-aura-class="forceRelatedListSingleContainer">
+        <template if:true={isConfigAvailable}>
+            <article class="slds-card slds-card_boundary headerBottomBorder forceRelatedListCardDesktop" data-aura-class="forceRelatedListCardDesktop">
+                <div class="slds-grid slds-page-header forceRelatedListCardHeader">
+                    <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                        <div class="slds-page-header__name">
+                            <div class="slds-grid slds-grid--align-spread">
+                                <div class="slds-media__figure stencil slds-avatar slds-avatar_small" aria-hidden="true">
+                                    <div class="extraSmall forceEntityIcon" style={iconBackground} data-aura-class="forceEntityIcon">
+                                        <span class="uiImage" data-aura-class="uiImage">
+                                            <image src={iconurl} class="icon " alt={title} title={title}/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="slds-media__body">
+                                    <h2>
+                                        <a class="slds-card__header-link baseCard__header-title-container" title={title}>
+                                            <span class="slds-card__header-title slds-truncate slds-m-right--xx-small" >{title} ({rowsize})</span>
+                                        </a>
+                                    </h2>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </header>
+                    <div class="slds-no-flex">
+                        <div class="slds-col slds-shrink-none slds-align-right actionsContainer">
+                            <div class="slds-form-element">
+                                <lightning-button-group role="group" class="slds-button-group">
+                                    <template for:each={listActions} for:item="lAction">
+                                        
+                                        <template if:false={lAction.isFileUpload}>
+                                            <template if:false={lAction.isDataImport}>
+                                                <lightning-button class="btn btn-secondary" key={lAction.name} name={lAction.name} label={lAction.label} onclick={handleListAction}></lightning-button>
+                                            </template>
+                                        </template>
+                                        <template if:true={lAction.isFileUpload}>
+                                            <lightning-file-upload
+                                                    key={lAction.name}
+                                                    name="Files"
+                                                    accept={acceptedFormats}
+                                                    record-id={recordId}
+                                                    onuploadfinished={handleUploadFinished}
+                                                    multiple
+                                                    class="btn btn-secondary">
+                                            </lightning-file-upload>
+                                        </template>
+                                        <template if:true={lAction.isDataImport}>
+                                            <lightning-file-upload
+                                                    key={lAction.name}
+                                                    label={lAction.label}
+                                                    name="Import"
+                                                    accept={acceptedImportFormats}
+                                                    record-id={recordId}
+                                                    onuploadfinished={handleUploadFinished}
+                                                    class="btn btn-secondary">
+                                            </lightning-file-upload>
+                                        </template>
+                                    </template>
+                                </lightning-button-group>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <template if:true={data}>    
+                    <div >
+                        <lightning-datatable
+                                key-field="Id"
+                                data={data}
+                                columns={columns}
+                                onrowaction={handleRowAction}
+                                hide-checkbox-column>
+                        </lightning-datatable>
+                    </div>
+                </template>
+                <!--spinner when component is loading-->
+                <div class="stencil-rl-spinner">
+                    <template if:false={isLoaded}>
+                        <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                    </template>
+                </div>
+                <!--end spinner-->
+
+                
+                <a title="View All">
+                    <div class="slds-card__footer" onclick={handleViewAllAction}>
+                        <span class="view-all-label">View All
+                            <span class="assistiveText"> {title}</span>
+                        </span>
+                    </div>
+                </a>
+                
+            </article>
+        </template>
+        <template if:false={isConfigAvailable}>
+                <p key={message} class="error-message">Related List Configuration not available</p>
+        </template>
+    </div>
+</template>
